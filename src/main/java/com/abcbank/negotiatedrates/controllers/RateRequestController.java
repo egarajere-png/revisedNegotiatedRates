@@ -40,7 +40,7 @@ public class RateRequestController {
 	@Autowired
 	private TransferService transferService;
 
-	@PostMapping("/api/rate-request-posting")
+	@PostMapping("/api/rate-requesting")
 	public DTOResponse postRequest(@RequestBody DTORateRequest dtoRateRequest) {
 		log.info("\n==================== Posting request {} =====================\n", dtoRateRequest);
 
@@ -63,7 +63,7 @@ public class RateRequestController {
 		return response;
 	}
 
-	@PostMapping("/api/rate-request-granting")
+	@PostMapping("/api/rate-granting")
 	public DTOResponse approveRequest(@RequestBody DTORateApproval dtoRateApproval) {
 		log.info("\n==================== Posting approval {} =====================\n", dtoRateApproval);
 		RateRequest request = rateRequestService.saveRateApproval(dtoRateApproval);
