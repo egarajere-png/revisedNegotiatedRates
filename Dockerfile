@@ -6,5 +6,5 @@ WORKDIR /app
 
 COPY target/negotiatedrates-0.0.1-SNAPSHOT.jar ./
 
-EXPOSE 8084
+EXPOSE 8085
 ENTRYPOINT ["java", "-jar", "./negotiatedrates-0.0.1-SNAPSHOT.jar"]

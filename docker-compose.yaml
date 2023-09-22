@@ -7,7 +7,7 @@ services:
     user: root
     build: .
     ports:
-      - "8084:8084"
+      - "8085:8085"
 #    networks:
 #      - spring-cloud-network
     volumes:
