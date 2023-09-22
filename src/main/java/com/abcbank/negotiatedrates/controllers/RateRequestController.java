@@ -110,8 +110,8 @@ public class RateRequestController {
 		return response;
 	}
 	
-	@PostMapping("/api/customer-pending-rate-request/{account}")
-	public DTORateResponse findCustomerNegotiatedRate(@PathVariable String account) {
+	@GetMapping("/api/pending-rate-request/{account}")
+	public DTORateResponse findPendingRateByAccount(@PathVariable String account) {
 		log.info("\n==================== Getting negotiated rate for account {} =====================\n", account);
 		RateRequest rateRequest = rateRequestService.findPendingCustomerRateRequest(account);
 		DTORateResponse response = new DTORateResponse();
@@ -131,7 +131,7 @@ public class RateRequestController {
 		return rateRequestService.getRateRequestRepo().findById(id);
 	}
 	
-	@GetMapping("/api/get-pending")
+	@GetMapping("/api/pending-rate-request")
 	public List<RateRequest> getPendingRequests() {
 		return rateRequestService.getRateRequestRepo().findByStatus((byte)0);
 	}
