@@ -43,7 +43,6 @@ public class RateRequestController {
 	@PostMapping("/api/rate-requesting")
 	public DTOResponse postRequest(@RequestBody DTORateRequest dtoRateRequest) {
 		log.info("\n==================== Posting request {} =====================\n", dtoRateRequest);
-
 		List<RateRequest> requests = rateRequestService.getRateRequestRepo().findExistingNegotiatedRateRequest(dtoRateRequest.getSourceAccount(), 
 				dtoRateRequest.getSourceCurrency(), dtoRateRequest.getDestinationCurrency());
 
@@ -72,7 +71,7 @@ public class RateRequestController {
 		if(request.getId() > 0) {
 			response.setError(false);
 			response.setResponseCode("000");
-			response.setMessage("Rate request posted");
+			response.setMessage("Rate request successfully granted");
 			
 		}
 		return response;

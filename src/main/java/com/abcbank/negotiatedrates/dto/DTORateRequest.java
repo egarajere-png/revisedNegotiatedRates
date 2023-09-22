@@ -16,4 +16,6 @@ public class DTORateRequest {
 	private String transferType;
 	private String uuid;
 	private boolean appeal;
+	private String accountName;
+	private String notificationEmail;
 }

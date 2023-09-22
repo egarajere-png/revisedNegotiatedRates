@@ -34,4 +34,6 @@ public class RateRequest {
 	private boolean appeal;
 	private String transferType;
 	private String uuid;
+	private String accountName;
+	private String notificationEmail;
 }
