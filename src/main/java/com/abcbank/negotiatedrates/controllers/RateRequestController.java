@@ -40,7 +40,7 @@ public class RateRequestController {
 	@Autowired
 	private TransferService transferService;
 
-	@PostMapping("/api/rate-request")
+	@PostMapping("/api/rate-request-posting")
 	public DTOResponse postRequest(@RequestBody DTORateRequest dtoRateRequest) {
 		log.info("\n==================== Posting request {} =====================\n", dtoRateRequest);
 
@@ -63,7 +63,7 @@ public class RateRequestController {
 		return response;
 	}
 
-	@PostMapping("/api/request-processing")
+	@PostMapping("/api/rate-request-granting")
 	public DTOResponse approveRequest(@RequestBody DTORateApproval dtoRateApproval) {
 		log.info("\n==================== Posting approval {} =====================\n", dtoRateApproval);
 		RateRequest request = rateRequestService.saveRateApproval(dtoRateApproval);
@@ -78,7 +78,7 @@ public class RateRequestController {
 		return response;
 	}
 
-	@PostMapping("/api/transfer")
+	@PostMapping("/api/transfer-posting")
 	public DTOResponse postTransfer(@RequestBody DTOTransfer dtoTransfer) {
 		log.info("\n==================== Posting transfer {} =====================\n", dtoTransfer);
 		Transfer transfer = transferService.saveTransfer(dtoTransfer);
@@ -110,10 +110,10 @@ public class RateRequestController {
 		return response;
 	}
 	
-	@PostMapping("/api/customer-pending-rate-request/{accountIdentifier}")
-	public DTORateResponse findCustomerNegotiatedRate(@PathVariable String accountIdentifier) {
-		log.info("\n==================== Getting negotiated rate for account {} =====================\n", accountIdentifier);
-		RateRequest rateRequest = rateRequestService.findPendingCustomerRateRequest(accountIdentifier);
+	@PostMapping("/api/customer-pending-rate-request/{account}")
+	public DTORateResponse findCustomerNegotiatedRate(@PathVariable String account) {
+		log.info("\n==================== Getting negotiated rate for account {} =====================\n", account);
+		RateRequest rateRequest = rateRequestService.findPendingCustomerRateRequest(account);
 		DTORateResponse response = new DTORateResponse();
 		if(rateRequest.getId() > 0) {
 			response.setAmountLimit(rateRequest.getGrantedAmountLimit());
