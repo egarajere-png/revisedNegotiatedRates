@@ -35,7 +35,11 @@ public class RateRequestService {
 		}
 
 		rateRequest = mapEntity(dtoRateRequest, rateRequest);
-
+		
+		if(rateRequest.getSourceAccount() == null || rateRequest.getSourceCurrency() == null || rateRequest.getDestinationCurrency() == null) {
+			return new RateRequest();
+		}
+		
 		Timestamp ts = new Timestamp(System.currentTimeMillis());
 		rateRequest.setEdittedOn(ts);
 		if(rateRequest.getCreatedOn() == null)
@@ -47,7 +51,7 @@ public class RateRequestService {
 		} catch(Exception e) {
 			log.error(e.getMessage());
 		}
-		return null;
+		return new RateRequest();
 	}
 
 	public RateRequest saveRateApproval(DTORateApproval dtoRateApproval) {

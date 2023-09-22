@@ -57,6 +57,10 @@ public class RateRequestController {
 				response.setError(false);
 				response.setResponseCode("000");
 				response.setMessage("Rate request posted");
+			} else {
+				response.setError(true);
+				response.setResponseCode("104");
+				response.setMessage("Request not posted, error occured");
 			}
 		}
 		return response;
