@@ -10,6 +10,6 @@ public class DTORateApproval {
 	private Double grantedAmountLimit;
 	private Double grantedRate;
 	private String grantedBy;
-	private byte status;
+	private int status;
 	private String uuid;
 }

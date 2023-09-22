@@ -1,0 +1,18 @@
+version: "3.0"
+services:
+  negotiated-rates-server:
+    container_name: negotiated-rates-service
+    restart: always
+    network_mode: host
+    user: root
+    build: .
+    ports:
+      - "8084:8084"
+#    networks:
+#      - spring-cloud-network
+    volumes:
+      - /var/logs:/logs
+
+#networks:
+#  spring-cloud-network:
+#    driver: bridge

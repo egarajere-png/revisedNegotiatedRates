@@ -4,8 +4,11 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.abcbank.negotiatedrates.dto.DTORateApproval;
@@ -22,6 +25,7 @@ import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @RestController
+@RequestMapping("/negotiated-rates")
 public class RateRequestController {
 
 	@Value("${params.keycloak.config.token-url}")
@@ -36,11 +40,11 @@ public class RateRequestController {
 	@Autowired
 	private TransferService transferService;
 
-	@PostMapping("/negotiated-rates/api/post-request")
+	@PostMapping("/api/rate-request")
 	public DTOResponse postRequest(@RequestBody DTORateRequest dtoRateRequest) {
 		log.info("\n==================== Posting request {} =====================\n", dtoRateRequest);
 
-		List<RateRequest> requests = rateRequestService.getRateRequestRepo().findPendingNegotiatedRate(dtoRateRequest.getSourceAccount(), 
+		List<RateRequest> requests = rateRequestService.getRateRequestRepo().findExistingNegotiatedRateRequest(dtoRateRequest.getSourceAccount(), 
 				dtoRateRequest.getSourceCurrency(), dtoRateRequest.getDestinationCurrency());
 
 		DTOResponse response = new DTOResponse();
@@ -59,7 +63,7 @@ public class RateRequestController {
 		return response;
 	}
 
-	@PostMapping("/negotiated-rates/api/approve-request")
+	@PostMapping("/api/request-processing")
 	public DTOResponse approveRequest(@RequestBody DTORateApproval dtoRateApproval) {
 		log.info("\n==================== Posting approval {} =====================\n", dtoRateApproval);
 		RateRequest request = rateRequestService.saveRateApproval(dtoRateApproval);
@@ -69,11 +73,12 @@ public class RateRequestController {
 			response.setError(false);
 			response.setResponseCode("000");
 			response.setMessage("Rate request posted");
+			
 		}
 		return response;
 	}
 
-	@PostMapping("/negotiated-rates/api/post-transfer")
+	@PostMapping("/api/transfer")
 	public DTOResponse postTransfer(@RequestBody DTOTransfer dtoTransfer) {
 		log.info("\n==================== Posting transfer {} =====================\n", dtoTransfer);
 		Transfer transfer = transferService.saveTransfer(dtoTransfer);
@@ -87,8 +92,8 @@ public class RateRequestController {
 		return response;
 	}
 
-	@PostMapping("/negotiated-rates/api/get-negotiated-rate")
-	public DTORateResponse getNegotiatedRate(@RequestBody DTOTransfer dtoTransfer) {
+	@PostMapping("/api/granted-rate")
+	public DTORateResponse findNegotiatedRate(@RequestBody DTOTransfer dtoTransfer) {
 		log.info("\n==================== Getting negotiated rate {} =====================\n", dtoTransfer);
 		List<RateRequest> requestList = rateRequestService.getRateRequestRepo().findNegotiatedRate(dtoTransfer.getSourceAccount(), 
 				dtoTransfer.getSourceCurrency(),dtoTransfer.getDestinationCurrency(), dtoTransfer.getAmount());
@@ -97,10 +102,37 @@ public class RateRequestController {
 		if(requestList.size() > 0) {
 			RateRequest rateRequest = requestList.get(requestList.size() - 1);
 			response.setAmountLimit(rateRequest.getGrantedAmountLimit());
+			response.setGrantedRate(rateRequest.getGrantedRate());
 			response.setSourceAccount(rateRequest.getSourceAccount());
 			response.setSourceCurrency(rateRequest.getSourceCurrency());
 			response.setDestinationCurrency(rateRequest.getDestinationCurrency());
 		}
 		return response;
+	}
+	
+	@PostMapping("/api/customer-pending-rate-request/{accountIdentifier}")
+	public DTORateResponse findCustomerNegotiatedRate(@PathVariable String accountIdentifier) {
+		log.info("\n==================== Getting negotiated rate for account {} =====================\n", accountIdentifier);
+		RateRequest rateRequest = rateRequestService.findPendingCustomerRateRequest(accountIdentifier);
+		DTORateResponse response = new DTORateResponse();
+		if(rateRequest.getId() > 0) {
+			response.setAmountLimit(rateRequest.getGrantedAmountLimit());
+			response.setGrantedRate(rateRequest.getGrantedRate());
+			response.setSourceAccount(rateRequest.getSourceAccount());
+			response.setSourceCurrency(rateRequest.getSourceCurrency());
+			response.setDestinationCurrency(rateRequest.getDestinationCurrency());
+			response.setAppeal(rateRequest.isAppeal());
+		}
+		return response;
+	}
+	
+	@GetMapping("/api/rate-request/{id}")
+	public RateRequest getRateRequest(@PathVariable int id) {
+		return rateRequestService.getRateRequestRepo().findById(id);
+	}
+	
+	@GetMapping("/api/get-pending")
+	public List<RateRequest> getPendingRequests() {
+		return rateRequestService.getRateRequestRepo().findByStatus((byte)0);
 	}
 }

@@ -12,7 +12,7 @@
 	<artifactId>negotiatedrates</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<name>negotiatedrates</name>
-	<description>Negotiated rates</description>
+	<description>Negotiated rates</description>	
 	<properties>
 		<java.version>11</java.version>
 	</properties>
@@ -114,5 +114,4 @@
 			</releases>
 		</pluginRepository>
 	</pluginRepositories>
-
 </project>

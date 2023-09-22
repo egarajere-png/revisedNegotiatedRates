@@ -1,6 +1,7 @@
 package com.abcbank.negotiatedrates.services;
 
 import java.sql.Timestamp;
+import java.util.List;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,10 +17,10 @@ import lombok.extern.slf4j.Slf4j;
 @Component
 @Slf4j
 public class RateRequestService {
-	
+
 	@Autowired
 	private RateRequestRepo rateRequestRepo;
-	
+
 	public RateRequest saveRateRequest(DTORateRequest dtoRateRequest) {
 		RateRequest rateRequest = new RateRequest();
 		if(dtoRateRequest.getId() > 0) {
@@ -32,41 +33,47 @@ public class RateRequestService {
 			UUID uuid = UUID.randomUUID();
 			rateRequest.setUuid(uuid.toString());
 		}
+
 		rateRequest = mapEntity(dtoRateRequest, rateRequest);
-		
+
 		Timestamp ts = new Timestamp(System.currentTimeMillis());
 		rateRequest.setEdittedOn(ts);
 		if(rateRequest.getCreatedOn() == null)
 			rateRequest.setCreatedOn(ts);
 		try {
+			log.info("\n\nJust about to persist: {}", rateRequest);
 			rateRequest = rateRequestRepo.save(rateRequest);
-		    return rateRequest;
+			return rateRequest;
 		} catch(Exception e) {
 			log.error(e.getMessage());
 		}
 		return null;
 	}
-	
+
 	public RateRequest saveRateApproval(DTORateApproval dtoRateApproval) {
 		RateRequest rateRequest = new RateRequest();
 		if(dtoRateApproval.getId() > 0) {
 			rateRequest = rateRequestRepo.findById(dtoRateApproval.getId()); 
 			//Confirm correct entity being editted by checking entities uuid
-			if(rateRequest.getUuid() == null) return new RateRequest();
-			if(!rateRequest.getUuid().equals(dtoRateApproval.getUuid())) return new RateRequest();
+			if(rateRequest != null) {
+				if(rateRequest.getUuid() == null) return new RateRequest();
+				if(!rateRequest.getUuid().equals(dtoRateApproval.getUuid())) return new RateRequest();
+				rateRequest.setGrantedAmountLimit(dtoRateApproval.getGrantedAmountLimit());
+				rateRequest.setGrantedRate(dtoRateApproval.getGrantedRate());
+				rateRequest.setGrantedBy(dtoRateApproval.getGrantedBy());
+				rateRequest.setStatus((byte)dtoRateApproval.getStatus());
+			}
 		}
-		rateRequest.setGrantedAmountLimit(dtoRateApproval.getGrantedAmountLimit());
-		rateRequest.setGrantedRate(dtoRateApproval.getGrantedRate());
-		rateRequest.setGrantedBy(dtoRateApproval.getGrantedBy());
-		rateRequest.setStatus(dtoRateApproval.getStatus());
+		
 		try {
 			rateRequest = rateRequestRepo.save(rateRequest);
 		} catch(Exception e) {
 			log.error(e.getMessage());
+			rateRequest = new RateRequest();
 		}
 		return rateRequest;
 	}
-	
+
 	public RateRequest mapEntity(DTORateRequest dtoRateRequest, RateRequest request) {
 		request.setId(dtoRateRequest.getId());
 		request.setRequestedAmountLimit(dtoRateRequest.getAmountLimit());
@@ -77,6 +84,14 @@ public class RateRequestService {
 		request.setDestinationCurrency(dtoRateRequest.getDestinationCurrency());
 		request.setTransferType(dtoRateRequest.getTransferType());
 		return request;
+	}
+
+	public RateRequest findPendingCustomerRateRequest(String account) {
+		List<RateRequest> rateRequests = rateRequestRepo.findBySourceAccountAndStatus(account, (byte)0);
+		if(rateRequests.size() > 0)
+			return rateRequests.get(0);
+		else
+			return new RateRequest();
 	}
 	
 	public RateRequestRepo getRateRequestRepo() {

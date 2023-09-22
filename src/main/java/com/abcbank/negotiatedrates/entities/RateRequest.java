@@ -31,6 +31,7 @@ public class RateRequest {
 	private Timestamp createdOn;
 	private Timestamp edittedOn;
 	private byte status;
+	private boolean appeal;
 	private String transferType;
 	private String uuid;
 }

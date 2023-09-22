@@ -11,4 +11,5 @@ public class DTORateResponse {
 	private String destinationCurrency;
 	private Double amountLimit;
 	private Double grantedRate;
+	private boolean appeal;
 }

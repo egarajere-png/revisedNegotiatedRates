@@ -15,4 +15,5 @@ public class DTORateRequest {
 	private String requestedBy;
 	private String transferType;
 	private String uuid;
+	private boolean appeal;
 }
