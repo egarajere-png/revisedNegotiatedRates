@@ -36,7 +36,8 @@ public class RateRequestService {
 
 		rateRequest = mapEntity(dtoRateRequest, rateRequest);
 		
-		if(rateRequest.getSourceAccount() == null || rateRequest.getSourceCurrency() == null || rateRequest.getDestinationCurrency() == null) {
+		if(rateRequest.getSourceAccount() == null || rateRequest.getSourceCurrency() == null || rateRequest.getDestinationCurrency() == null
+				 || rateRequest.getRequestedAmountLimit() < 0.1) {
 			return new RateRequest();
 		}
 		
