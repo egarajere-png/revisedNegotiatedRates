@@ -14,7 +14,7 @@ import lombok.ToString;
 @ToString
 @Data
 @Entity
-@Table
+@Table(name = "negotiated_rates_requests")
 public class RateRequest {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
