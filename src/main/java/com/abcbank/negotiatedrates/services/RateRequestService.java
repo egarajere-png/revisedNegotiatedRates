@@ -25,13 +25,13 @@ public class RateRequestService {
 		RateRequest rateRequest = new RateRequest();
 		if(dtoRateRequest.getId() > 0) {
 			rateRequest = rateRequestRepo.findById(dtoRateRequest.getId());
-			rateRequest.setStatus((byte)0);
 			//Confirm correct entity being editted by checking entities uuid
 			if(rateRequest.getUuid() == null) return new RateRequest();
 			if(!rateRequest.getUuid().equals(dtoRateRequest.getUuid())) return new RateRequest();
 		} else {
 			UUID uuid = UUID.randomUUID();
 			rateRequest.setUuid(uuid.toString());
+			rateRequest.setStatus((byte)0);
 		}
 
 		rateRequest = mapEntity(dtoRateRequest, rateRequest);
@@ -93,6 +93,14 @@ public class RateRequestService {
 
 	public RateRequest findPendingCustomerRateRequest(String account) {
 		List<RateRequest> rateRequests = rateRequestRepo.findBySourceAccountAndStatus(account, (byte)0);
+		if(rateRequests.size() > 0)
+			return rateRequests.get(0);
+		else
+			return new RateRequest();
+	}
+	
+	public RateRequest findPendingCustomerRateAccept(String account) {
+		List<RateRequest> rateRequests = rateRequestRepo.findBySourceAccountAndStatus(account, (byte)1);
 		if(rateRequests.size() > 0)
 			return rateRequests.get(0);
 		else

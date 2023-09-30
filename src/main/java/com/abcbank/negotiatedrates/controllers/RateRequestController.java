@@ -80,7 +80,19 @@ public class RateRequestController {
 		}
 		return response;
 	}
-
+	
+	@GetMapping("/api/rate-accepting/{account}/{action}")
+	public boolean acceptRate(@PathVariable String account, @PathVariable String action) {
+		log.info("\n==================== Accepting/appealing rate - account: {}, action: {} =====================\n", account, action);
+		RateRequest rateRequest = rateRequestService.findPendingCustomerRateAccept(account);
+		if(rateRequest == null) {
+			return false;
+		}
+		rateRequest.setStatus((byte)2);
+		rateRequestService.getRateRequestRepo().save(rateRequest);
+	    return true;	
+	}
+	
 	@PostMapping("/api/transfer-posting")
 	public DTOResponse postTransfer(@RequestBody DTOTransfer dtoTransfer) {
 		log.info("\n==================== Posting transfer {} =====================\n", dtoTransfer);
@@ -99,7 +111,7 @@ public class RateRequestController {
 	public DTORateResponse findNegotiatedRate(@RequestBody DTOTransfer dtoTransfer) {
 		log.info("\n==================== Getting negotiated rate {} =====================\n", dtoTransfer);
 		List<RateRequest> requestList = rateRequestService.getRateRequestRepo().findNegotiatedRate(dtoTransfer.getSourceAccount(), 
-				dtoTransfer.getSourceCurrency(),dtoTransfer.getDestinationCurrency(), dtoTransfer.getAmount());
+				dtoTransfer.getSourceCurrency(), dtoTransfer.getDestinationCurrency(), dtoTransfer.getAmount());
 		log.info("\n==================== Calculated negotiated rate {} =====================\n", requestList);
 		DTORateResponse response = new DTORateResponse();
 		if(requestList.size() > 0) {
@@ -109,6 +121,22 @@ public class RateRequestController {
 			response.setSourceAccount(rateRequest.getSourceAccount());
 			response.setSourceCurrency(rateRequest.getSourceCurrency());
 			response.setDestinationCurrency(rateRequest.getDestinationCurrency());
+		}
+		return response;
+	}
+	
+	@GetMapping("/api/pending-accept-rate/{account}")
+	public DTORateResponse findPendingAcceptRateByAccount(@PathVariable String account) {
+		log.info("\n==================== Getting negotiated rate for account {} =====================\n", account);
+		RateRequest rateRequest = rateRequestService.findPendingCustomerRateAccept(account);
+		DTORateResponse response = new DTORateResponse();
+		if(rateRequest.getId() > 0) {
+			response.setAmountLimit(rateRequest.getGrantedAmountLimit());
+			response.setGrantedRate(rateRequest.getGrantedRate());
+			response.setSourceAccount(rateRequest.getSourceAccount());
+			response.setSourceCurrency(rateRequest.getSourceCurrency());
+			response.setDestinationCurrency(rateRequest.getDestinationCurrency());
+			response.setAppeal(rateRequest.isAppeal());
 		}
 		return response;
 	}

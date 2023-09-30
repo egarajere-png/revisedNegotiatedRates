@@ -16,7 +16,6 @@ import lombok.ToString;
 @ToString
 @Data
 @Entity
-@Table(name = "negotiated_rates_transfers")
 public class Transfer {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
