@@ -11,7 +11,7 @@ public interface RateRequestRepo extends CrudRepository<RateRequest, Integer>{
 	List<RateRequest> findAll();
 	List<RateRequest> findBySourceAccountAndStatus(String sourceAccount, byte status);
 	
-	@Query(value = "select r.* from rate_request r where status = 2 and date(r.editted_on) = date(now()) and r.source_account = ?1 "
+	@Query(value = "select r.* from rate_request r where status < 2 and date(r.editted_on) = date(now()) and r.source_account = ?1 "
 			+ "and r.source_currency = ?2 and r.destination_currency = ?3 and date(r.created_on)=date(now())", nativeQuery = true)
 	List<RateRequest> findExistingNegotiatedRateRequest(String sourceAccount, String sourceCurrency, String destinationCurrency);
 	

@@ -34,6 +34,8 @@ public class TransferService {
 		List<RateRequest> rateRequestList = rateRequestRepo.findNegotiatedRate(dtoTransfer.getSourceAccount(), dtoTransfer.getSourceCurrency(), 
 				dtoTransfer.getDestinationCurrency(),dtoTransfer.getAmount());
 		
+		log.info("\n ============ rateRequestList: {}", rateRequestList);
+				
 		if(rateRequestList.size() > 0) {
 			RateRequest rateRequest = rateRequestList.get(rateRequestList.size() - 1);
 			transfer.setRateRequest(rateRequest);

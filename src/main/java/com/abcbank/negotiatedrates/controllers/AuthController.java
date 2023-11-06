@@ -27,7 +27,7 @@ public class AuthController {
 	@Value("${params.keycloak.config.clientid}")
 	private String keyCloakClientId;
 	
-	@PostMapping("/negotiated-rates/api/get-auth-token")
+	@PostMapping("/negotiated-rates/api/auth-token")
     public DTOAuthPayloadResponse authenticateUser(@RequestBody DTOAuthPayload authPayload) {
 		HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);

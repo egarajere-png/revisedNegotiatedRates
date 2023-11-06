@@ -59,7 +59,6 @@ public class RateRequestService {
 		RateRequest rateRequest = new RateRequest();
 		if(dtoRateApproval.getId() > 0) {
 			rateRequest = rateRequestRepo.findById(dtoRateApproval.getId()); 
-			//Confirm correct entity being editted by checking entities uuid
 			if(rateRequest != null) {
 				if(rateRequest.getUuid() == null) return new RateRequest();
 				if(!rateRequest.getUuid().equals(dtoRateApproval.getUuid())) return new RateRequest();
@@ -68,14 +67,14 @@ public class RateRequestService {
 				rateRequest.setGrantedBy(dtoRateApproval.getGrantedBy());
 				rateRequest.setStatus((byte)dtoRateApproval.getStatus());
 			}
+			try {
+				rateRequest = rateRequestRepo.save(rateRequest);
+			} catch(Exception e) {
+				log.error(e.getMessage());
+				rateRequest = new RateRequest();
+			}
 		}
 		
-		try {
-			rateRequest = rateRequestRepo.save(rateRequest);
-		} catch(Exception e) {
-			log.error(e.getMessage());
-			rateRequest = new RateRequest();
-		}
 		return rateRequest;
 	}
 

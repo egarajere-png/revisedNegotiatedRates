@@ -46,6 +46,7 @@ public class RateRequestController {
 		List<RateRequest> requests = rateRequestService.getRateRequestRepo().findExistingNegotiatedRateRequest(dtoRateRequest.getSourceAccount(), 
 				dtoRateRequest.getSourceCurrency(), dtoRateRequest.getDestinationCurrency());
 
+				log.info("\n ================= Requests: {}", requests);
 		DTOResponse response = new DTOResponse();
 		response.setError(true);
 		if(requests.size() > 0) {
@@ -77,6 +78,9 @@ public class RateRequestController {
 			response.setResponseCode("000");
 			response.setMessage("Rate request successfully granted");
 			
+		} else {
+			response.setResponseCode("004");
+			response.setMessage("Rate request not granted, error occured");
 		}
 		return response;
 	}
@@ -103,6 +107,9 @@ public class RateRequestController {
 			response.setError(false);
 			response.setResponseCode("000");
 			response.setMessage("Transfer successfully posted");
+		} else {
+			response.setResponseCode("004");
+			response.setMessage("Error occured");
 		}
 		return response;
 	}
