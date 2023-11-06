@@ -10,6 +10,6 @@ import lombok.ToString;
 @AllArgsConstructor
 @NoArgsConstructor
 public class DTOAuthPayload {
-    String userName;
+    String username;
     String password;
 }

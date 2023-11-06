@@ -1,6 +1,5 @@
 package com.abcbank.negotiatedrates.controllers;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -34,17 +33,13 @@ public class AuthController {
         headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
         MultiValueMap<String, String> map = new LinkedMultiValueMap<>();
         map.add("client_id", keyCloakClientId);
-        map.add("username", authPayload.getUserName());
+        map.add("username", authPayload.getUsername());
         map.add("password", authPayload.getPassword());
         map.add("grant_type", "password");
 
         HttpEntity<MultiValueMap<String, String>> entity = new HttpEntity<>(map, headers);
         try {
-            return new RestTemplate().exchange(KEYCLOAK_URL,
-                    HttpMethod.POST,
-                    entity,
-                    DTOAuthPayloadResponse.class
-            ).getBody();
+            return new RestTemplate().exchange(KEYCLOAK_URL,HttpMethod.POST,entity,DTOAuthPayloadResponse.class).getBody();
         } catch (Exception exception) {
             log.info(exception.getLocalizedMessage());
             String responseError = exception.getLocalizedMessage().replace("400 Bad Request: ", "");

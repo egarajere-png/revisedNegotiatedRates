@@ -82,15 +82,15 @@ public class RateRequestController {
 	}
 	
 	@GetMapping("/api/rate-accepting/{account}/{action}")
-	public boolean acceptRate(@PathVariable String account, @PathVariable String action) {
+	public RateRequest acceptRate(@PathVariable String account, @PathVariable String action) {
 		log.info("\n==================== Accepting/appealing rate - account: {}, action: {} =====================\n", account, action);
 		RateRequest rateRequest = rateRequestService.findPendingCustomerRateAccept(account);
 		if(rateRequest == null) {
-			return false;
+			return new RateRequest();
 		}
 		rateRequest.setStatus((byte)2);
 		rateRequestService.getRateRequestRepo().save(rateRequest);
-	    return true;	
+	    return rateRequest;
 	}
 	
 	@PostMapping("/api/transfer-posting")
