@@ -140,6 +140,9 @@ public class RateRequestController {
 	public RateRequest acceptRate(@PathVariable String account, @PathVariable String action) {
 		log.info("\n==================== Accepting/appealing rate - account: {}, action: {} =====================\n", account, action);
 		RateRequest rateRequest = rateRequestService.findPendingCustomerRateAccept(account);
+
+		log.info("\n ========================= RateRequest: {} =============== \n", rateRequest);
+		
 		if(rateRequest.getId() == 0) {
 			return new RateRequest();
 		}
