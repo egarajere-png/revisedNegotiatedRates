@@ -18,6 +18,7 @@ import com.abcbank.negotiatedrates.dto.DTOResponse;
 import com.abcbank.negotiatedrates.dto.DTOTransfer;
 import com.abcbank.negotiatedrates.entities.RateRequest;
 import com.abcbank.negotiatedrates.entities.Transfer;
+import com.abcbank.negotiatedrates.services.AppNotification;
 import com.abcbank.negotiatedrates.services.RateRequestService;
 import com.abcbank.negotiatedrates.services.TransferService;
 
@@ -40,6 +41,9 @@ public class RateRequestController {
 	@Autowired
 	private TransferService transferService;
 
+	@Autowired
+	private AppNotification appNotification;
+
 	@PostMapping("/api/rate-requesting")
 	public DTOResponse postRequest(@RequestBody DTORateRequest dtoRateRequest) {
 		log.info("\n==================== Posting request {} =====================\n", dtoRateRequest);
@@ -58,6 +62,7 @@ public class RateRequestController {
 				response.setError(false);
 				response.setResponseCode("000");
 				response.setMessage("Rate request posted");
+				appNotification.sendRateRequestNotification(request, "request");
 			} else {
 				response.setError(true);
 				response.setResponseCode("104");
@@ -77,7 +82,8 @@ public class RateRequestController {
 			response.setError(false);
 			response.setResponseCode("000");
 			response.setMessage("Rate request successfully granted");
-			
+			// Sending email notification to requester
+			appNotification.sendRateRequestNotification(request, "granted");
 		} else {
 			response.setResponseCode("004");
 			response.setMessage("Rate request not granted, error occured");
@@ -132,6 +138,7 @@ public class RateRequestController {
 			response.setSourceCurrency(rateRequest.getSourceCurrency());
 			response.setDestinationCurrency(rateRequest.getDestinationCurrency());
 			response.setAppeal(rateRequest.isAppeal());
+			appNotification.sendRateRequestNotification(rateRequest, "accept");
 		}
 		return response;
 	}
