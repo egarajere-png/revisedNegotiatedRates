@@ -159,6 +159,11 @@ public class RateRequestController {
 		} catch(Exception e) {}
 		rateRequest.setStatus(status);
 		rateRequestService.getRateRequestRepo().save(rateRequest);
+		if(status == (byte)2) {
+			appNotification.sendRateRequestNotification(rateRequest, "accepted");
+		} else {
+			appNotification.sendRateRequestNotification(rateRequest, "rejected");
+		}
 	    return rateRequest;
 	}
 

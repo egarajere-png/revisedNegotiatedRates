@@ -87,6 +87,7 @@ public class RateRequestService {
 		request.setSourceCurrency(dtoRateRequest.getSourceCurrency());
 		request.setDestinationCurrency(dtoRateRequest.getDestinationCurrency());
 		request.setTransferType(dtoRateRequest.getTransferType());
+		request.setNotificationEmail(dtoRateRequest.getNotificationEmail());
 		return request;
 	}
 

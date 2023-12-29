@@ -1,32 +1,51 @@
 package com.abcbank.negotiatedrates.services;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import com.abcbank.negotiatedrates.entities.RateRequest;
 import com.abcbank.negotiatedrates.utils.Emailer;
+import com.abcbank.negotiatedrates.utils.StringOperation;
 
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
+@Service
 public class AppNotification {
 
+    
     @Autowired
     private Emailer emailer;
 
     public void sendRateRequestNotification(RateRequest request, String type) {
+        String from = "internalsupport@abcthebank.com";
+        String name = StringOperation.getFirstWord(request.getRequestedBy());
         String subject = "Negotiated Rate Request Initiated";
-        String body = "Hello, your negotiated rate request has been successfully initiated. You will be receiving a response soon.";
-		double rate = request.getGrantedRate();
+        String body = String.format("Hello %s, your negotiated rate request has been successfully initiated for account %s, "
+        + "currency %s to %s. You will be receiving a response soon.", name, request.getSourceAccount(), request.getSourceCurrency(), request.getDestinationCurrency());
+
+        String bodyTreasury = String.format("Hello, a negotiated rate request has been initiated by %s, account %s, "
+        + "currency %s to %s. Kindly action on Negotiated Rates Portal.", request.getRequestedBy(), request.getSourceAccount(), request.getSourceCurrency(), request.getDestinationCurrency());
         if(type.equalsIgnoreCase("granted")) {
+            double rate = request.getGrantedRate();
             subject = "Negotiated Rate Request Granted";
-            body = String.format("Hello, you have been granted a negotiated rate of %d. To accept the offer, go to ABConnect, "
-            + "on transfers select 'Accept Rate', the account and submit", rate);
+            body = String.format("Hello %s, you have been granted a negotiated rate of %,.2f for the account %s, currency %s to %s. To accept the rate offered, go to ABConnect, "
+            + "on transfers select 'Accept Grated Rate', the account and submit", name, rate, request.getSourceAccount(), request.getSourceCurrency(), request.getDestinationCurrency());
         } else if(type.equalsIgnoreCase("accepted")) {
-            subject = "Negotiated Rate Request Accepted";
-            body = String.format("Hello, you have accepted the granted negotiated rate of %d. You can now go ahead and transact, the rate "
-            + "will be applied on your transaction automatically", rate);
+            double rate = request.getGrantedRate();
+            subject = "Negotiated Rate Offer Accepted";
+            body = String.format("Hello %s, you have accepted the granted negotiated rate of %,.2f, for account %s2, currency %s to %s. You can now go ahead and transact, the rate "
+            + "will be applied on your transaction automatically", name, rate, request.getSourceAccount(), request.getSourceCurrency(), request.getDestinationCurrency());
+        } else if(type.equalsIgnoreCase("rejected")) {
+            double rate = request.getGrantedRate();
+            subject = "Negotiated Rate Offer Rejected";
+            body = String.format("Hello %s, you have rejected the granted negotiated rate of %,.2f, for account %s, currency %s to %s.", 
+            name, rate, request.getSourceAccount(), request.getSourceCurrency(), request.getDestinationCurrency());
+        } else {
+            String to = "samuel.waithaka@abcthebank.com";
+            emailer.send(from, to, subject, bodyTreasury); 
         }
-		String from = "internalsupport@abcthebank.com";
+        
 		String to = request.getNotificationEmail();
 		emailer.send(from, to, subject, body);
 	}
