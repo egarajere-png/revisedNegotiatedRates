@@ -1,11 +1,11 @@
 version: "3.9"
 services:
-  negotiated-rates-server:
-    container_name: negotiated-rates-service
+  negotiated-rates-backend:
+    build: .
+    image: negotiated-rates-backend:v1
+    container_name: negotiated-rates-backend
     restart: always
     network_mode: host
-#    user: root
-    build: .
 #    ports:
 #      - "8090:8090"
 #    networks:
