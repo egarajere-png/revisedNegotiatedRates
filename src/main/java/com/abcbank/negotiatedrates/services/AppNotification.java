@@ -45,7 +45,7 @@ public class AppNotification {
             String to = "samuel.waithaka@abcthebank.com";
             emailer.send(from, to, subject, bodyTreasury); 
         }
-        
+        log.info(" ==================== Type: {}, Body: {}", type, body);
 		String to = request.getNotificationEmail();
 		emailer.send(from, to, subject, body);
 	}
