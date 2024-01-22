@@ -1,4 +1,4 @@
 #!/bin/bash
 
+# Deploying the service
 git pull && mvn clean package && docker compose down && docker compose up --build -d && docker compose logs -f
-
