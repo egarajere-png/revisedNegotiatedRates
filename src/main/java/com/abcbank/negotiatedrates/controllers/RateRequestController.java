@@ -138,7 +138,7 @@ public class RateRequestController {
 			response.setSourceCurrency(rateRequest.getSourceCurrency());
 			response.setDestinationCurrency(rateRequest.getDestinationCurrency());
 			response.setAppeal(rateRequest.isAppeal());
-			appNotification.sendRateRequestNotification(rateRequest, "accept");
+			//appNotification.sendRateRequestNotification(rateRequest, "accept");
 		}
 		return response;
 	}
