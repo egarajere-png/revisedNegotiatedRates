@@ -148,7 +148,7 @@ public class RateRequestController {
 		log.info("\n==================== Accepting/appealing rate - account: {}, action: {} =====================\n", account, action);
 		RateRequest rateRequest = rateRequestService.findPendingCustomerRateAccept(account);
 
-		log.info("\n ========================= RateRequest: {} =============== \n", rateRequest);
+		log.info("\n ========================= This is RateRequest: {} =============== \n", rateRequest);
 		log.info("=============== Checking if rate request exists");
 		if(rateRequest.getId() == 0) {
 			return new RateRequest();
