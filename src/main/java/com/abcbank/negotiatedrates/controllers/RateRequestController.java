@@ -153,6 +153,7 @@ public class RateRequestController {
 		if(rateRequest.getId() == 0) {
 			return new RateRequest();
 		}
+
 		byte status = 3;
 		switch (action) {
 			case "Accept":
@@ -161,6 +162,8 @@ public class RateRequestController {
 			default:
 				break;
 		}
+
+		log.info("============= Status: {}::::::\n\n", status);
 		rateRequest.setStatus(status);
 		rateRequestService.getRateRequestRepo().save(rateRequest);
 		if(status == (byte)2) {
