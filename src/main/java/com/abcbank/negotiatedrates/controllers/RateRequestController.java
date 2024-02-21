@@ -153,10 +153,14 @@ public class RateRequestController {
 		if(rateRequest.getId() == 0) {
 			return new RateRequest();
 		}
-		byte status = 0;
-		try {
-			status = Byte.parseByte(action);
-		} catch(Exception e) {}
+		byte status = 3;
+		switch (action) {
+			case "Accept":
+			status = 2;
+				break;
+			default:
+				break;
+		}
 		rateRequest.setStatus(status);
 		rateRequestService.getRateRequestRepo().save(rateRequest);
 		if(status == (byte)2) {
