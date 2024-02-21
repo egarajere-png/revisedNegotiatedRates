@@ -155,13 +155,7 @@ public class RateRequestController {
 		}
 
 		byte status = 3;
-		switch (action) {
-			case "Accept":
-			status = 2;
-				break;
-			default:
-				break;
-		}
+		status = action.equalsIgnoreCase("Accept") ? (byte)2 : status;
 
 		log.info("============= Status: {}::::::\n\n", status);
 		rateRequest.setStatus(status);
