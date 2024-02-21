@@ -149,14 +149,15 @@ public class RateRequestController {
 		RateRequest rateRequest = rateRequestService.findPendingCustomerRateAccept(account);
 
 		log.info("\n ========================= RateRequest: {} =============== \n", rateRequest);
-		
+		log.info("=============== Checking if rate request exists");
 		if(rateRequest.getId() == 0) {
 			return new RateRequest();
 		}
-
+		log.info("=============== Rate request exists");
+		log.info("=============== About to pick action: {}", action);
 		byte status = 3;
 		status = action.equalsIgnoreCase("Accept") ? (byte)2 : status;
-
+		log.info("=============== About to pick action, status: {}", status);
 		log.info("============= Status: {}::::::\n\n", status);
 		rateRequest.setStatus(status);
 		rateRequestService.getRateRequestRepo().save(rateRequest);
