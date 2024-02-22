@@ -1,5 +1,7 @@
 package com.abcbank.negotiatedrates.controllers;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -145,7 +147,14 @@ public class RateRequestController {
 
 	@GetMapping("/api/customer-pending-accept-rate/{custId}")
 	public DTORateResponse findPendingAcceptRateByCustId(@PathVariable String custId) {
+		try {
+			custId = URLDecoder.decode(custId, "utf-8");
+			custId = custId.replaceAll("'", "");
+			custId = custId.split(",")[0];
+		} catch (Exception e) {
+		}
 		log.info("\n==================== Getting negotiated rate for custId {} =====================\n", custId);
+
 		RateRequest rateRequest = rateRequestService.findPendingCustomerRateAcceptByCustId(custId);
 		DTORateResponse response = new DTORateResponse();
 		if(rateRequest.getId() > 0) {
