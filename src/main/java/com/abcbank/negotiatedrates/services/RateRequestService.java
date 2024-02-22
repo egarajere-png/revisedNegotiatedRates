@@ -81,6 +81,7 @@ public class RateRequestService {
 	public RateRequest mapEntity(DTORateRequest dtoRateRequest, RateRequest request) {
 		request.setId(dtoRateRequest.getId());
 		request.setRequestedAmountLimit(dtoRateRequest.getAmountLimit());
+		request.setCustId(dtoRateRequest.getCustId());
 		request.setRequestedBy(dtoRateRequest.getRequestedBy());
 		request.setRequestedRate(dtoRateRequest.getRequestedRate());
 		request.setSourceAccount(dtoRateRequest.getSourceAccount());
