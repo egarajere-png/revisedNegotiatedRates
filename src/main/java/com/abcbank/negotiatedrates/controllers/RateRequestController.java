@@ -143,6 +143,24 @@ public class RateRequestController {
 		return response;
 	}
 
+	@GetMapping("/api/customer-pending-accept-rate/{custId}")
+	public DTORateResponse findPendingAcceptRateByCustId(@PathVariable String custId) {
+		log.info("\n==================== Getting negotiated rate for custId {} =====================\n", custId);
+		RateRequest rateRequest = rateRequestService.findPendingCustomerRateAcceptByCustId(custId);
+		DTORateResponse response = new DTORateResponse();
+		if(rateRequest.getId() > 0) {
+			response.setAmountLimit(rateRequest.getGrantedAmountLimit());
+			response.setGrantedRate(rateRequest.getGrantedRate());
+			response.setSourceAccount(rateRequest.getSourceAccount());
+			response.setSourceCurrency(rateRequest.getSourceCurrency());
+			response.setDestinationCurrency(rateRequest.getDestinationCurrency());
+			response.setAppeal(rateRequest.isAppeal());
+			//appNotification.sendRateRequestNotification(rateRequest, "accept");
+		}
+		log.info("\n==================== Response for custId {} =====================\n", custId);
+		return response;
+	}
+
 	@GetMapping("/api/rate-accepting/{account}/{action}")
 	public RateRequest acceptRate(@PathVariable String account, @PathVariable String action) {
 		log.info("\n==================== Accepting/appealing rate - account: {}, action: {} =====================\n", account, action);

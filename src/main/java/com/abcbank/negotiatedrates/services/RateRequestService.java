@@ -106,6 +106,14 @@ public class RateRequestService {
 		else
 			return new RateRequest();
 	}
+
+	public RateRequest findPendingCustomerRateAcceptByCustId(String custId) {
+		List<RateRequest> rateRequests = rateRequestRepo.findByCustIdAndStatus(custId, (byte)1);
+		if(rateRequests.size() > 0)
+			return rateRequests.get(0);
+		else
+			return new RateRequest();
+	}
 	
 	public RateRequestRepo getRateRequestRepo() {
 		return rateRequestRepo;

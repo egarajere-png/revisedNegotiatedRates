@@ -18,6 +18,7 @@ public class RateRequest {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private int id;
+	private String custId;
 	private String sourceAccount;
 	private String sourceCurrency;
 	private String destinationCurrency;
