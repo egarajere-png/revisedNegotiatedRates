@@ -157,7 +157,7 @@ public class RateRequestController {
 			response.setAppeal(rateRequest.isAppeal());
 			//appNotification.sendRateRequestNotification(rateRequest, "accept");
 		}
-		log.info("\n==================== Response for custId {} =====================\n", custId);
+		log.info("\n==================== Response for custId {}: {}=====================\n", custId, response);
 		return response;
 	}
 
