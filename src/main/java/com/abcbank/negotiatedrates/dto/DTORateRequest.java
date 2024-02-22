@@ -8,6 +8,7 @@ import lombok.ToString;
 public class DTORateRequest {
 	private int id;
 	private String sourceAccount;
+	private String custId;
 	private String sourceCurrency;
 	private String destinationCurrency;
 	private Double amountLimit;
