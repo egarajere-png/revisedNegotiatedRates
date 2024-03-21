@@ -9,6 +9,7 @@ public class DTOTransfer {
 	private int id;
 	private Double amount;
 	private String sourceAccount;
+	private String custId;
 	private String sourceCurrency;
 	private String destinationCurrency;
 	private String recipientName;

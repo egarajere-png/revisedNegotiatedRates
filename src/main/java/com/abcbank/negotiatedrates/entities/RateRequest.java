@@ -6,7 +6,6 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.Table;
 
 import lombok.Data;
 import lombok.ToString;
@@ -19,7 +18,7 @@ public class RateRequest {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private int id;
 	private String custId;
-	private String sourceAccount;
+	//private String sourceAccount;
 	private String sourceCurrency;
 	private String destinationCurrency;
 	private Double requestedAmountLimit;
@@ -34,6 +33,6 @@ public class RateRequest {
 	private boolean appeal;
 	private String transferType;
 	private String uuid;
-	private String accountName;
+	private String customerName;
 	private String notificationEmail;
 }

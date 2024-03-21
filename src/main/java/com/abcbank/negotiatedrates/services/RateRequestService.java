@@ -36,7 +36,7 @@ public class RateRequestService {
 
 		rateRequest = mapEntity(dtoRateRequest, rateRequest);
 		
-		if(rateRequest.getSourceAccount() == null || rateRequest.getSourceCurrency() == null || rateRequest.getDestinationCurrency() == null
+		if(rateRequest.getCustId() == null || rateRequest.getSourceCurrency() == null || rateRequest.getDestinationCurrency() == null
 				 || rateRequest.getRequestedAmountLimit() < 0.1) {
 			return new RateRequest();
 		}
@@ -84,7 +84,7 @@ public class RateRequestService {
 		request.setCustId(dtoRateRequest.getCustId());
 		request.setRequestedBy(dtoRateRequest.getRequestedBy());
 		request.setRequestedRate(dtoRateRequest.getRequestedRate());
-		request.setSourceAccount(dtoRateRequest.getSourceAccount());
+		//request.setSourceAccount(dtoRateRequest.getSourceAccount());
 		request.setSourceCurrency(dtoRateRequest.getSourceCurrency());
 		request.setDestinationCurrency(dtoRateRequest.getDestinationCurrency());
 		request.setTransferType(dtoRateRequest.getTransferType());
@@ -92,16 +92,16 @@ public class RateRequestService {
 		return request;
 	}
 
-	public RateRequest findPendingCustomerRateRequest(String account) {
-		List<RateRequest> rateRequests = rateRequestRepo.findBySourceAccountAndStatus(account, (byte)0);
+	public RateRequest findPendingCustomerRateRequest(String custId) {
+		List<RateRequest> rateRequests = rateRequestRepo.findByCustIdAndStatus(custId, (byte)0);
 		if(rateRequests.size() > 0)
 			return rateRequests.get(0);
 		else
 			return new RateRequest();
 	}
 	
-	public RateRequest findPendingCustomerRateAccept(String account) {
-		List<RateRequest> rateRequests = rateRequestRepo.findBySourceAccountAndStatus(account, (byte)1);
+	public RateRequest findPendingCustomerRateAccept(String custId) {
+		List<RateRequest> rateRequests = rateRequestRepo.findByCustIdAndStatus(custId, (byte)1);
 		if(rateRequests.size() > 0)
 			return rateRequests.get(0);
 		else

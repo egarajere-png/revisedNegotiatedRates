@@ -6,7 +6,8 @@ import lombok.ToString;
 @ToString
 @Data
 public class DTORateResponse {
-	private String sourceAccount;
+	//private String sourceAccount;
+	private String custId;
 	private String sourceCurrency;
 	private String destinationCurrency;
 	private Double amountLimit;

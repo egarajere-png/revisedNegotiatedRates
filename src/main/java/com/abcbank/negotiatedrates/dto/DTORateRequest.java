@@ -7,7 +7,7 @@ import lombok.ToString;
 @Data
 public class DTORateRequest {
 	private int id;
-	private String sourceAccount;
+	//private String sourceAccount;
 	private String custId;
 	private String sourceCurrency;
 	private String destinationCurrency;
