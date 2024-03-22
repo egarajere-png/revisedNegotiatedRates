@@ -61,7 +61,7 @@ public class RateRequestController {
 		} else {
 			requests = rateRequestService.getRateRequestRepo().findNegotiatedRate(dtoRateRequest.getCustId(),
 					dtoRateRequest.getSourceCurrency(), dtoRateRequest.getDestinationCurrency(), 0);
-			if (requests.size() > 0) {
+			if (requests.size() == 0) {
 				RateRequest request = rateRequestService.saveRateRequest(dtoRateRequest);
 				if (request.getId() > 0) {
 					response.setError(false);
