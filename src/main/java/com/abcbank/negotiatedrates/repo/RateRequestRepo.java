@@ -28,10 +28,10 @@ public interface RateRequestRepo extends CrudRepository<RateRequest, Integer>{
 	
 	@Query(value = "select r.* from rate_request r \n"
 			+ "where status = 2 and date(r.editted_on) = date(now()) and r.cust_id = ?1 and r.source_currency = ?2 and r.destination_currency = ?3\n"
-			+ "and r.granted_amount_limit - ?4 >= case when (select sum(amount) total from transfer t where t.cust_id = ?1 "
+			+ "and r.granted_amount_limit - ?4 >= case when (select sum(amount) total from transfer t left join rate_request rr on t.rate_request_id = rr.id where rr.cust_id = ?1 "
 			+ "and t.source_currency ="
 			+ "?2 and t.destination_currency = ?3\n"
-			+ "and date(t.created_on)=date(now())) is null then 0 else ((select sum(amount) total from transfer t where t.cust_id = ?1  and t.source_currency = ?2 and t.destination_currency = ?3 \n"
-			+ "and date(t.created_on)=date(now()))) end", nativeQuery = true)
+			+ "and date(t.created_on)=date(now())) is null then 0 else (select sum(amount) total from transfer t left join rate_request rr on t.rate_request_id = rr.id where rr.cust_id = ?1  and t.source_currency = ?2 and t.destination_currency = ?3 \n"
+			+ "and date(t.created_on)=date(now())) end", nativeQuery = true)
 	List<RateRequest> findNegotiatedRate(String custId, String sourceCurrency, String destinationCurrency, double amount);
 }

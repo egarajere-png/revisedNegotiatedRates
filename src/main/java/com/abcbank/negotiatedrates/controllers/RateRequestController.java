@@ -59,16 +59,23 @@ public class RateRequestController {
 			response.setResponseCode("004");
 			response.setMessage("There is a pending rate request. Contact ABC treasury.");
 		} else {
-			RateRequest request = rateRequestService.saveRateRequest(dtoRateRequest);
-			if (request.getId() > 0) {
-				response.setError(false);
-				response.setResponseCode("000");
-				response.setMessage("Rate request posted");
-				appNotification.sendRateRequestNotification(request, "request");
+			requests = rateRequestService.getRateRequestRepo().findNegotiatedRate(dtoRateRequest.getCustId(),
+					dtoRateRequest.getSourceCurrency(), dtoRateRequest.getDestinationCurrency(), 0);
+			if (requests.size() > 0) {
+				RateRequest request = rateRequestService.saveRateRequest(dtoRateRequest);
+				if (request.getId() > 0) {
+					response.setError(false);
+					response.setResponseCode("000");
+					response.setMessage("Rate request posted");
+					appNotification.sendRateRequestNotification(request, "request");
+				} else {
+					response.setError(true);
+					response.setResponseCode("104");
+					response.setMessage("Request not posted, error occured");
+				}
 			} else {
-				response.setError(true);
-				response.setResponseCode("104");
-				response.setMessage("Request not posted, error occured");
+				response.setResponseCode("004");
+				response.setMessage("You have non-utilized negotiated rate.");
 			}
 		}
 		return response;
@@ -179,7 +186,7 @@ public class RateRequestController {
 	@GetMapping("/api/rate-accepting/{custId}/{action}")
 	public RateRequest acceptRate(@PathVariable String custId, @PathVariable String action) {
 		log.info("\n==================== Accepting/appealing rate - custId: {}, action: {} =====================\n",
-		custId, action);
+				custId, action);
 		RateRequest rateRequest = rateRequestService.findPendingCustomerRateAccept(custId);
 
 		log.info("\n ========================= This is RateRequest: {} =============== \n", rateRequest);
