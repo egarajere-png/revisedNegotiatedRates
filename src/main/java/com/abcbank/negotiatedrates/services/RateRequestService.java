@@ -74,7 +74,6 @@ public class RateRequestService {
 				rateRequest = new RateRequest();
 			}
 		}
-		
 		return rateRequest;
 	}
 
@@ -84,7 +83,7 @@ public class RateRequestService {
 		request.setCustId(dtoRateRequest.getCustId());
 		request.setRequestedBy(dtoRateRequest.getRequestedBy());
 		request.setRequestedRate(dtoRateRequest.getRequestedRate());
-		//request.setSourceAccount(dtoRateRequest.getSourceAccount());
+		request.setCustomerName(dtoRateRequest.getRequestedBy());
 		request.setSourceCurrency(dtoRateRequest.getSourceCurrency());
 		request.setDestinationCurrency(dtoRateRequest.getDestinationCurrency());
 		request.setTransferType(dtoRateRequest.getTransferType());
