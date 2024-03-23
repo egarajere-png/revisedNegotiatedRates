@@ -6,7 +6,7 @@ import lombok.ToString;
 @ToString
 @Data
 public class DTORateResponse {
-	//private String sourceAccount;
+	private int negotiatedRateId;
 	private String custId;
 	private String sourceCurrency;
 	private String destinationCurrency;

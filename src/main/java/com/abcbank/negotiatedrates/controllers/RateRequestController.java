@@ -130,6 +130,7 @@ public class RateRequestController {
 			response.setAmountLimit(rateRequest.getGrantedAmountLimit());
 			response.setGrantedRate(rateRequest.getGrantedRate());
 			response.setCustId(rateRequest.getCustId());
+			response.setNegotiatedRateId(rateRequest.getId());
 			response.setSourceCurrency(rateRequest.getSourceCurrency());
 			response.setDestinationCurrency(rateRequest.getDestinationCurrency());
 		}

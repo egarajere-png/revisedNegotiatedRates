@@ -7,6 +7,7 @@ import lombok.ToString;
 @Data
 public class DTOTransfer {
 	private int id;
+	private int rateRequestId;
 	private Double amount;
 	private String sourceAccount;
 	private String custId;
