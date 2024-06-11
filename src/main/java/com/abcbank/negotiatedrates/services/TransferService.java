@@ -27,7 +27,7 @@ public class TransferService {
 	public Transfer saveTransfer(DTOTransfer dtoTransfer) {
 		Transfer transfer = new Transfer();
 		if(dtoTransfer.getId() > 0) {
-			transfer = transferRepo.findById(dtoTransfer.getId()); 
+			transfer = transferRepo.findById(dtoTransfer.getRateRequestId()); 
 		}
 		transfer = mapEntity(dtoTransfer, transfer);
 		

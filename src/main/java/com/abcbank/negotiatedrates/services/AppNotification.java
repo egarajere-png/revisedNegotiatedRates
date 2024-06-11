@@ -29,18 +29,18 @@ public class AppNotification {
         if(type.equalsIgnoreCase("granted")) {
             double rate = request.getGrantedRate();
             subject = "Negotiated Rate Request Granted";
-            body = String.format("Hello %s, you have been granted a negotiated rate of %,.2f for the customer name %s, currency %s to %s. To accept the rate offered, go to ABConnect, "
+            body = String.format("Hello %s, \n\nYou have been granted a negotiated rate of %,.2f for the customer name %s, currency %s to %s. To accept the rate offered, go to ABConnect, "
             + "on transfers select 'Accept Grated Rate', the account and submit", name, rate, request.getCustomerName(), request.getSourceCurrency(), request.getDestinationCurrency());
             bodyTreasury = "";
         } else if(type.equalsIgnoreCase("accepted")) {
             double rate = request.getGrantedRate();
             subject = "Negotiated Rate Offer Accepted";
-            body = String.format("Hello %s, you have accepted the granted negotiated rate of %,.2f, for customer name %s2, currency %s to %s. You can now go ahead and transact, the rate "
+            body = String.format("Hello %s, \n\nYou have accepted the granted negotiated rate of %,.2f, for customer name %s, currency %s to %s. You can now go ahead and transact, the rate "
             + "will be applied on your transaction automatically", name, rate, request.getCustomerName(), request.getSourceCurrency(), request.getDestinationCurrency());
         } else if(type.equalsIgnoreCase("rejected")) {
             double rate = request.getGrantedRate();
             subject = "Negotiated Rate Offer Rejected";
-            body = String.format("Hello %s, you have rejected the granted negotiated rate of %,.2f, for customer name %s, currency %s to %s.", 
+            body = String.format("Hello %s, \n\nYou have rejected the granted negotiated rate of %,.2f, for customer name %s, currency %s to %s.", 
             name, rate, request.getCustomerName(), request.getSourceCurrency(), request.getDestinationCurrency());
         } else {
             String to = "treasury@abcthebank.com";
