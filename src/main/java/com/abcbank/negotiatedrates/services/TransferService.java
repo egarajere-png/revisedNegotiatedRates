@@ -27,20 +27,9 @@ public class TransferService {
 	public Transfer saveTransfer(DTOTransfer dtoTransfer) {
 		Transfer transfer = new Transfer();
 		if(dtoTransfer.getId() > 0) {
-			transfer = transferRepo.findById(dtoTransfer.getRateRequestId()); 
+			transfer = transferRepo.findById(dtoTransfer.getRateRequestId());
 		}
 		transfer = mapEntity(dtoTransfer, transfer);
-		
-		/*List<RateRequest> rateRequestList = rateRequestRepo.findNegotiatedRate(dtoTransfer.getSourceAccount(), dtoTransfer.getSourceCurrency(), 
-				dtoTransfer.getDestinationCurrency(),dtoTransfer.getAmount());*/
-		
-		//log.info("\n ============ rateRequestList: {}", rateRequestList);
-		/*if(rateRequestList.size() > 0) {
-			RateRequest rateRequest = rateRequestList.get(rateRequestList.size() - 1);
-			transfer.setRateRequest(rateRequest);
-		} else {
-			return new Transfer();
-		}*/
 		
 		Timestamp ts = new Timestamp(System.currentTimeMillis());
 		transfer.setEdittedOn(ts);
@@ -66,8 +55,8 @@ public class TransferService {
 		transfer.setRecipientBank(dtoTransfer.getRecipientBank());
 		transfer.setRecipientBankAddress(dtoTransfer.getRecipientBankAddress());
 		transfer.setSourceAccount(dtoTransfer.getSourceAccount());
-		transfer.setSourceCurrency(dtoTransfer.getSourceCurrency());
-		transfer.setDestinationCurrency(dtoTransfer.getDestinationCurrency());
+		transfer.setSourceCurrency(rateRequest.getSourceCurrency());
+		transfer.setDestinationCurrency(rateRequest.getDestinationCurrency());
 		transfer.setRateRequest(rateRequest);
 		return transfer;
 	}
