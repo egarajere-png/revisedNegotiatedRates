@@ -59,6 +59,12 @@ public class RateRequestController {
 			return response;
 		}
 		
+		if(srcCurr.equalsIgnoreCase(dstCurr)) {
+			response.setResponseCode("004");
+			response.setMessage("The source currency cannot be the same as the destination currency");
+			return response;
+		}
+		
 		List<RateRequest> requests = rateRequestService.getRateRequestRepo().findExistingNegotiatedRateRequest(
 				dtoRateRequest.getCustId(),
 				dtoRateRequest.getSourceCurrency(), dtoRateRequest.getDestinationCurrency());
