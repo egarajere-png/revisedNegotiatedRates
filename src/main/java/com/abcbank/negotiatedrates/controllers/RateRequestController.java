@@ -48,12 +48,22 @@ public class RateRequestController {
 	@PostMapping("/api/rate-requesting")
 	public DTOResponse postRequest(@RequestBody DTORateRequest dtoRateRequest) {
 		log.info("\n==================== Posting request {} =====================\n", dtoRateRequest);
+		DTOResponse response = new DTOResponse();
+		String srcCurr = dtoRateRequest.getSourceCurrency();
+		String dstCurr = dtoRateRequest.getDestinationCurrency();
+		
+		if(!srcCurr.equalsIgnoreCase("404") && !srcCurr.equalsIgnoreCase("KES") 
+				&& !dstCurr.equalsIgnoreCase("404") && !dstCurr.equalsIgnoreCase("KES")) {
+			response.setResponseCode("004");
+			response.setMessage("Either the source or destination currency must be KES");
+			return response;
+		}
+		
 		List<RateRequest> requests = rateRequestService.getRateRequestRepo().findExistingNegotiatedRateRequest(
 				dtoRateRequest.getCustId(),
 				dtoRateRequest.getSourceCurrency(), dtoRateRequest.getDestinationCurrency());
 
 		log.info("\n ================= Requests: {}", requests);
-		DTOResponse response = new DTOResponse();
 		response.setError(true);
 		if (requests.size() > 0) {
 			response.setResponseCode("004");
