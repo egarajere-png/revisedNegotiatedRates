@@ -92,7 +92,8 @@ public class RateRequestService {
 	}
 
 	public RateRequest findPendingCustomerRateRequest(String custId) {
-		List<RateRequest> rateRequests = rateRequestRepo.findByCustIdAndStatus(custId, (byte)0);
+		byte pendingTreasuryStatus = 0;
+		List<RateRequest> rateRequests = rateRequestRepo.findByCustIdAndStatus(custId, pendingTreasuryStatus);
 		if(rateRequests.size() > 0)
 			return rateRequests.get(0);
 		else
@@ -100,7 +101,8 @@ public class RateRequestService {
 	}
 	
 	public RateRequest findPendingCustomerRateAccept(String custId) {
-		List<RateRequest> rateRequests = rateRequestRepo.findByCustIdAndStatus(custId, (byte)1);
+		byte pendingCustomerStatus = 1;
+		List<RateRequest> rateRequests = rateRequestRepo.findByCustIdAndStatus(custId, pendingCustomerStatus);
 		if(rateRequests.size() > 0)
 			return rateRequests.get(0);
 		else
@@ -108,7 +110,8 @@ public class RateRequestService {
 	}
 
 	public RateRequest findPendingCustomerRateAcceptByCustId(String custId) {
-		List<RateRequest> rateRequests = rateRequestRepo.findByCustIdAndStatus(custId, (byte)1);
+		byte pendingCustomerStatus = 1;
+		List<RateRequest> rateRequests = rateRequestRepo.findByCustIdAndStatus(custId, pendingCustomerStatus);
 		if(rateRequests.size() > 0)
 			return rateRequests.get(0);
 		else

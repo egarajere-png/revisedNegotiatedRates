@@ -99,9 +99,15 @@ public class RateRequestController {
 
 	@PostMapping("/api/rate-granting")
 	public DTOResponse approveRequest(@RequestBody DTORateApproval dtoRateApproval) {
-		log.info("\n==================== Posting approval {} =====================\n", dtoRateApproval);
-		RateRequest request = rateRequestService.saveRateApproval(dtoRateApproval);
+		log.info("==================== Posting approval {} =====================\n", dtoRateApproval);
 		DTOResponse response = new DTOResponse();
+		if(dtoRateApproval.getGrantedAmountLimit() == null || dtoRateApproval.getGrantedRate() == null) {
+			response.setResponseCode("004");
+			response.setMessage("Rate request not granted, either rate or amount limit is missing");
+			return response;
+		}
+		RateRequest request = rateRequestService.saveRateApproval(dtoRateApproval);
+		
 		response.setError(true);
 		if (request.getId() > 0) {
 			response.setError(false);

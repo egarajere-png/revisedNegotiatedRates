@@ -17,6 +17,13 @@ public class AppNotification {
     @Autowired
     private Emailer emailer;
 
+    public static void main(String[] args) {
+    	String st2 = "This is numbers %1$,.0f and %1$,.0f";
+		System.out.println(String.format(st2, 10*1.0, 10000.1));
+		
+		String st = "This is string %1$s, %1$s and %2$s. Also numbers %f";
+		//System.out.println(String.format(st, "Samuel", "Waithaka", 100.1));
+	}
     public void sendRateRequestNotification(RateRequest request, String type) {
         String from = "internalsupport@abcthebank.com";
         String name = StringOperation.getFirstWord(request.getRequestedBy());
@@ -36,7 +43,7 @@ public class AppNotification {
             double rate = request.getGrantedRate();
             subject = "Negotiated Rate Offer Accepted";
             body = String.format("Hello %s, \n\nYou have accepted the granted negotiated rate of %,.2f, for customer name %s, currency %s to %s. You can now go ahead and transact, the rate "
-            + "will be applied on your transaction automatically", name, rate, request.getCustomerName(), request.getSourceCurrency(), request.getDestinationCurrency());
+            + "will be applied on your transaction automatically. You can transact upto %s%,.2f with this rate", name, rate, request.getCustomerName(), request.getSourceCurrency(), request.getDestinationCurrency(), request.getDestinationCurrency(), request.getGrantedAmountLimit());
         } else if(type.equalsIgnoreCase("rejected")) {
             double rate = request.getGrantedRate();
             subject = "Negotiated Rate Offer Rejected";
