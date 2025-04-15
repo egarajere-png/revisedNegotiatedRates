@@ -1,6 +1,7 @@
 package com.abcbank.negotiatedrates.services;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import com.abcbank.negotiatedrates.entities.RateRequest;
@@ -16,6 +17,9 @@ public class AppNotification {
     
     @Autowired
     private Emailer emailer;
+    
+    @Value("${app.config.param.email-from}")
+    private String from;
 
     public static void main(String[] args) {
     	String st2 = "This is numbers %1$,.0f and %1$,.0f";
@@ -24,8 +28,8 @@ public class AppNotification {
 		String st = "This is string %1$s, %1$s and %2$s. Also numbers %f";
 		//System.out.println(String.format(st, "Samuel", "Waithaka", 100.1));
 	}
+    
     public void sendRateRequestNotification(RateRequest request, String type) {
-        String from = "internalsupport@abcthebank.com";
         String name = StringOperation.getFirstWord(request.getRequestedBy());
         String subject = "Negotiated Rate Request Initiated";
         String body = String.format("Hello %s, your negotiated rate request has been successfully initiated for customer name %s, "
