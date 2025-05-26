@@ -14,21 +14,13 @@ import lombok.extern.slf4j.Slf4j;
 @Service
 public class AppNotification {
 
-    
+   
     @Autowired
     private Emailer emailer;
     
     @Value("${app.config.param.email-from}")
     private String from;
 
-    public static void main(String[] args) {
-    	String st2 = "This is numbers %1$,.0f and %1$,.0f";
-		System.out.println(String.format(st2, 10*1.0, 10000.1));
-		
-		String st = "This is string %1$s, %1$s and %2$s. Also numbers %f";
-		//System.out.println(String.format(st, "Samuel", "Waithaka", 100.1));
-	}
-    
     public void sendRateRequestNotification(RateRequest request, String type) {
         String name = StringOperation.getFirstWord(request.getRequestedBy());
         String subject = "Negotiated Rate Request Initiated";
@@ -40,8 +32,12 @@ public class AppNotification {
         if(type.equalsIgnoreCase("granted")) {
             double rate = request.getGrantedRate();
             subject = "Negotiated Rate Request Granted";
-            body = String.format("Hello %s, \n\nYou have been granted a negotiated rate of %,.2f for the customer name %s, currency %s to %s. To accept the rate offered, go to ABConnect, "
-            + "on transfers select 'Accept Grated Rate', the account and submit", name, rate, request.getCustomerName(), request.getSourceCurrency(), request.getDestinationCurrency());
+            body = String.format("Hello %s, \n\nYou have been granted a negotiated rate of %,.2f for the customer name %s, currency %s to %s. \n\nTo accept the rate offered:"
+            		+ "\n\n * Go to ABConnect - https://ibank.abcthebank.com"
+            		+ "\n * On transfers, select 'Accept Granted Rate', select the account and submit"
+            + "\n\nOnce you have accepted the rate, proceed to transfers and select the transfer type to complete your negotiated rate transfer."
+            + "\n\nPlease note the negotiated rate offer is valid until 5.00PM today."
+            + "\nIn case of any query, kindly reach us on talk2us@abcthebank.com or 0701 700 700", name, rate, request.getCustomerName(), request.getSourceCurrency(), request.getDestinationCurrency());
             bodyTreasury = "";
         } else if(type.equalsIgnoreCase("accepted")) {
             double rate = request.getGrantedRate();
