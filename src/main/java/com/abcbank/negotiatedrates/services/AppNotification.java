@@ -31,14 +31,12 @@ public class AppNotification {
         if(type.equalsIgnoreCase("granted")) {
             double rate = request.getGrantedRate();
             subject = "Negotiated Rate Request Granted";
-            String template = """
-            		Hello %s, \n\nYou have been granted a negotiated rate of %,.2f for the customer name %s, currency %s to %s. \n\nTo accept the rate offered:
-            		\n\n * Go to ABConnect - https://ibank.abcthebank.com
-            		\n * On transfers, select 'Accept Granted Rate', select the account and submit
-            		\n\nOnce you have accepted the rate, proceed to transfers and select the transfer type to complete your negotiated rate transfer.
-            		\n\nPlease note the negotiated rate offer is valid until 5.00PM today.
-            		\nIn case of any query, kindly reach us on talk2us@abcthebank.com or 0701 700 700
-            		""".trim();
+            String template = "Hello %s, \n\nYou have been granted a negotiated rate of %,.2f for the customer name %s, currency %s to %s. \n\nTo accept the rate offered:\n"
+    		+ "\n\n * Go to ABConnect - https://ibank.abcthebank.com\n"
+    		+ "\n * On transfers, select 'Accept Granted Rate', select the account and submit\n"
+    		+ "\n\nOnce you have accepted the rate, proceed to transfers and select the transfer type to complete your negotiated rate transfer.\n"
+    		+ "\n\nPlease note the negotiated rate offer is valid until 5.00PM today.\n"
+    		+ "\nIn case of any query, kindly reach us on talk2us@abcthebank.com or 0701 700 700";
             body = String.format(template.trim(), name, rate, request.getCustomerName(), request.getSourceCurrency(), request.getDestinationCurrency());
             bodyTreasury = "";
         } else if(type.equalsIgnoreCase("accepted")) {
