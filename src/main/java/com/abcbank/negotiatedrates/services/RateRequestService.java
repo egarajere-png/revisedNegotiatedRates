@@ -14,6 +14,12 @@ import com.abcbank.negotiatedrates.repo.RateRequestRepo;
 
 import lombok.extern.slf4j.Slf4j;
 
+/**
+ * Encapsulates negotiated rate request business logic and repository interaction.
+ *
+ * This component validates new requests, saves approval decisions, and provides
+ * helper methods to retrieve pending customer and treasury requests.
+ */
 @Component
 @Slf4j
 public class RateRequestService {
@@ -21,11 +27,21 @@ public class RateRequestService {
 	@Autowired
 	private RateRequestRepo rateRequestRepo;
 
+	/**
+	 * Saves a negotiated rate request to the repository.
+	 *
+	 * If the payload contains an existing ID, the corresponding record is loaded
+	 * and validated against its UUID to prevent unauthorized edits.
+	 * Otherwise, a new request is created with initial status and UUID.
+	 *
+	 * @param dtoRateRequest Customer request payload
+	 * @return Persisted RateRequest entity or an empty RateRequest on failure
+	 */
 	public RateRequest saveRateRequest(DTORateRequest dtoRateRequest) {
 		RateRequest rateRequest = new RateRequest();
 		if(dtoRateRequest.getId() > 0) {
 			rateRequest = rateRequestRepo.findById(dtoRateRequest.getId());
-			//Confirm correct entity being editted by checking entities uuid
+			// Confirm correct entity being edited by checking entity UUID.
 			if(rateRequest.getUuid() == null) return new RateRequest();
 			if(!rateRequest.getUuid().equals(dtoRateRequest.getUuid())) return new RateRequest();
 		} else {
@@ -36,6 +52,7 @@ public class RateRequestService {
 
 		rateRequest = mapEntity(dtoRateRequest, rateRequest);
 		
+		// Ensure required request fields are present and amount limit is valid.
 		if(rateRequest.getCustId() == null || rateRequest.getSourceCurrency() == null || rateRequest.getDestinationCurrency() == null
 				 || rateRequest.getRequestedAmountLimit() < 0.1) {
 			return new RateRequest();
@@ -55,6 +72,15 @@ public class RateRequestService {
 		return new RateRequest();
 	}
 
+	/**
+	 * Persists approval data for an existing negotiated rate request.
+	 *
+	 * Validates the UUID to ensure the approval applies to the correct record,
+	 * then updates granted amount, granted rate, granted by, and status.
+	 *
+	 * @param dtoRateApproval Approval payload from the treasury user
+	 * @return Updated RateRequest entity or an empty RateRequest on failure
+	 */
 	public RateRequest saveRateApproval(DTORateApproval dtoRateApproval) {
 		RateRequest rateRequest = new RateRequest();
 		if(dtoRateApproval.getId() > 0) {
@@ -77,6 +103,15 @@ public class RateRequestService {
 		return rateRequest;
 	}
 
+	/**
+	 * Copies fields from the DTO request into the entity.
+	 *
+	 * This mapping isolates API payload structure from persistence structure.
+	 *
+	 * @param dtoRateRequest Incoming request DTO
+	 * @param request Domain entity to populate
+	 * @return Populated RateRequest entity
+	 */
 	public RateRequest mapEntity(DTORateRequest dtoRateRequest, RateRequest request) {
 		request.setId(dtoRateRequest.getId());
 		request.setRequestedAmountLimit(dtoRateRequest.getAmountLimit());
@@ -91,6 +126,14 @@ public class RateRequestService {
 		return request;
 	}
 
+	/**
+	 * Finds a rate request that is pending treasury review for a customer.
+	 *
+	 * Uses status 0 to represent requests awaiting treasury approval.
+	 *
+	 * @param custId Customer identifier
+	 * @return First matching pending RateRequest or an empty RateRequest
+	 */
 	public RateRequest findPendingCustomerRateRequest(String custId) {
 		byte pendingTreasuryStatus = 0;
 		List<RateRequest> rateRequests = rateRequestRepo.findByCustIdAndStatus(custId, pendingTreasuryStatus);
@@ -100,6 +143,15 @@ public class RateRequestService {
 			return new RateRequest();
 	}
 	
+	/**
+	 * Finds a rate request that is pending customer acceptance.
+	 *
+	 * Uses status 1 to represent requests that have been granted and await
+	 * customer acceptance or rejection.
+	 *
+	 * @param custId Customer identifier
+	 * @return First matching pending acceptance RateRequest or an empty RateRequest
+	 */
 	public RateRequest findPendingCustomerRateAccept(String custId) {
 		byte pendingCustomerStatus = 1;
 		List<RateRequest> rateRequests = rateRequestRepo.findByCustIdAndStatus(custId, pendingCustomerStatus);
@@ -109,6 +161,15 @@ public class RateRequestService {
 			return new RateRequest();
 	}
 
+	/**
+	 * Finds a pending accepted rate request by customer ID.
+	 *
+	 * This method is used when multiple customer identifiers are provided and
+	 * the first match should be returned.
+	 *
+	 * @param custId Customer identifier
+	 * @return Matching RateRequest or an empty RateRequest
+	 */
 	public RateRequest findPendingCustomerRateAcceptByCustId(String custId) {
 		byte pendingCustomerStatus = 1;
 		List<RateRequest> rateRequests = rateRequestRepo.findByCustIdAndStatus(custId, pendingCustomerStatus);
@@ -118,6 +179,11 @@ public class RateRequestService {
 			return new RateRequest();
 	}
 	
+	/**
+	 * Exposes the rate request repository for controller and service use.
+	 *
+	 * @return RateRequestRepo instance for querying persisted rate requests
+	 */
 	public RateRequestRepo getRateRequestRepo() {
 		return rateRequestRepo;
 	}

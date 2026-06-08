@@ -10,6 +10,12 @@ import javax.persistence.Id;
 import lombok.Data;
 import lombok.ToString;
 
+/**
+ * Represents a negotiated rate request in the persistence layer.
+ *
+ * The entity stores customer details, requested and granted currency rates,
+ * approval status, and tracking fields such as UUID and timestamps.
+ */
 @ToString
 @Data
 @Entity

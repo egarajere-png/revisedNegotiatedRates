@@ -19,12 +19,27 @@ import org.springframework.stereotype.Component;
 
 import java.util.Properties;
 
+/**
+ * Utility for sending email notifications using SMTP.
+ *
+ * This component constructs MimeMessage payloads and sends them using the
+ * configured SMTP host value.
+ */
 @Component
 public class Emailer {
 	
 	@Value("${app.config.param.smtphost}")
 	private String smtpHost;
 	
+	/**
+	 * Sends a plain HTML email to a single recipient.
+	 *
+	 * @param from Sender address
+	 * @param to Recipient address
+	 * @param subject Email subject line
+	 * @param body Email body content in HTML format
+	 * @return true if the message was sent successfully
+	 */
 	public boolean send(String from, String to, String subject, String body) {
 		Properties properties = System.getProperties();
 		properties.setProperty("mail.smtp.host", smtpHost);
@@ -45,6 +60,17 @@ public class Emailer {
 		}
 	}
 	
+	/**
+	 * Sends an email with optional CC recipients and attachments.
+	 *
+	 * @param from Sender address
+	 * @param to Array of recipient addresses
+	 * @param cc Array of CC recipient addresses
+	 * @param subject Email subject line
+	 * @param body Email body content
+	 * @param files Attachment file paths
+	 * @return true if the message was sent successfully
+	 */
 	public boolean send(String from, String[] to, String[] cc, String subject, String body, String[] files) {
 		Properties properties = System.getProperties();
 		properties.setProperty("mail.smtp.host", smtpHost);

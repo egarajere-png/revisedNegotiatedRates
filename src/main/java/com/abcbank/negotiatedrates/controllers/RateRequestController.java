@@ -3,6 +3,8 @@ package com.abcbank.negotiatedrates.controllers;
 import java.net.URLDecoder;
 import java.util.List;
 
+import org.springframework.security.access.prepost.PreAuthorize;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -25,6 +27,20 @@ import com.abcbank.negotiatedrates.services.TransferService;
 
 import lombok.extern.slf4j.Slf4j;
 
+/**
+ * Handles creation, approval, retrieval and management of negotiated rate
+ * requests between customers and treasury officers.
+ *
+ * This controller exposes REST endpoints used by customers to request
+ * negotiated exchange rates, treasury users to grant or reject requests,
+ * and customers to post transfers and query negotiated rate offers.
+ *
+ * Security:
+ * Protected using Keycloak JWT authentication
+ * Uses Spring Security role-based authorization
+ * CUSTOMER users can create and view requests and transfers
+ * TREASURER users can approve requests
+ */
 @Slf4j
 @RestController
 @RequestMapping("/negotiated-rates")
@@ -45,6 +61,18 @@ public class RateRequestController {
 	@Autowired
 	private AppNotification appNotification;
 
+
+	/**
+	 * Creates a new negotiated rate request for a customer.
+	 *
+	 * Validates currency pair rules and checks for duplicate pending requests.
+	 * If no duplicate pending request exists, the request is persisted and a
+	 * notification is sent to treasury.
+	 *
+	 * @param dtoRateRequest Request payload submitted by customer
+	 * @return Response indicating success or failure
+	 */
+	@PreAuthorize("hasRole('CUSTOMER')")
 	@PostMapping("/api/rate-requesting")
 	public DTOResponse postRequest(@RequestBody DTORateRequest dtoRateRequest) {
 		log.info("\n==================== Posting request {} =====================\n", dtoRateRequest);
@@ -52,6 +80,7 @@ public class RateRequestController {
 		String srcCurr = dtoRateRequest.getSourceCurrency();
 		String dstCurr = dtoRateRequest.getDestinationCurrency();
 		
+		// Ensure that one side of the currency pair is KES for negotiated rate eligibility.
 		if(!srcCurr.equalsIgnoreCase("404") && !srcCurr.equalsIgnoreCase("KES") 
 				&& !dstCurr.equalsIgnoreCase("404") && !dstCurr.equalsIgnoreCase("KES")) {
 			response.setResponseCode("004");
@@ -97,6 +126,16 @@ public class RateRequestController {
 		return response;
 	}
 
+	/**
+	 * Grants a negotiated rate request from the treasury side.
+	 *
+	 * Validates approval input, saves granted rate details, and sends an email
+	 * notification to the requester when the request is successfully granted.
+	 *
+	 * @param dtoRateApproval Approval payload containing granted rate and limit
+	 * @return Response indicating success or failure
+	 */
+	@PreAuthorize("hasRole('TREASURER')")
 	@PostMapping("/api/rate-granting")
 	public DTOResponse approveRequest(@RequestBody DTORateApproval dtoRateApproval) {
 		log.info("==================== Posting approval {} =====================\n", dtoRateApproval);
@@ -122,6 +161,16 @@ public class RateRequestController {
 		return response;
 	}
 
+	/**
+	 * Posts transfer details after a rate request has been approved.
+	 *
+	 * Persists the transfer record and returns a success or error response
+	 * based on whether the transfer was saved successfully.
+	 *
+	 * @param dtoTransfer Transfer payload with amount and beneficiary details
+	 * @return Response indicating success or failure
+	 */
+	@PreAuthorize("hasRole('CUSTOMER')")
 	@PostMapping("/api/transfer-posting")
 	public DTOResponse postTransfer(@RequestBody DTOTransfer dtoTransfer) {
 		log.info("\n==================== Posting transfer {} =====================\n", dtoTransfer);
@@ -139,6 +188,16 @@ public class RateRequestController {
 		return response;
 	}
 
+	/**
+	 * Retrieves a negotiated rate offer that remains valid for the provided transfer.
+	 *
+	 * Uses the customer ID, currency pair, and requested amount to find a granted
+	 * negotiated rate that still has available limit today.
+	 *
+	 * @param dtoTransfer Transfer payload used to locate the negotiated rate
+	 * @return Negotiated rate details for the transfer
+	 */
+	@PreAuthorize("hasRole('CUSTOMER')")
 	@PostMapping("/api/granted-rate")
 	public DTORateResponse findNegotiatedRate(@RequestBody DTOTransfer dtoTransfer) {
 		log.info("\n==================== Getting negotiated rate {} =====================\n", dtoTransfer);
@@ -159,6 +218,7 @@ public class RateRequestController {
 		return response;
 	}
 
+	@PreAuthorize("hasRole('CUSTOMER')")
 	@GetMapping("/api/pending-accept-rate/{custId}")
 	public DTORateResponse findPendingAcceptRateByCustomer(@PathVariable String custId) {
 		log.info("\n==================== Getting negotiated rate for custId {} =====================\n", custId);
@@ -177,6 +237,17 @@ public class RateRequestController {
 		return response;
 	}
 
+	/**
+	 * Finds a pending accepted rate for a customer ID that may contain encoded or
+	 * comma-separated values.
+	 *
+	 * Decodes the path variable, sanitizes values, and searches for the first
+	 * pending customer acceptance rate across the supplied identifiers.
+	 *
+	 * @param custId Encoded customer identifier(s) from the path
+	 * @return Negotiated rate response for the first matching pending accept request
+	 */
+	@PreAuthorize("hasRole('CUSTOMER')")
 	@GetMapping("/api/customer-pending-accept-rate/{custId}")
 	public DTORateResponse findPendingAcceptRateByCustId(@PathVariable String custId) {
 		DTORateResponse response = new DTORateResponse();
@@ -187,6 +258,7 @@ public class RateRequestController {
 			log.info("\n==================== Getting negotiated rate for custId {} =====================\n", custId);
 			RateRequest rateRequest = null;
 			for (String custId2 : custId.split(",")) {
+				// Search each provided customer identifier until a pending accept request is found.
 				rateRequest = rateRequestService.findPendingCustomerRateAcceptByCustId(custId2);
 				if (rateRequest != null)
 					break;
@@ -208,6 +280,17 @@ public class RateRequestController {
 		return response;
 	}
 
+	/**
+	 * Accepts or rejects a negotiated rate offer on behalf of a customer.
+	 *
+	 * Updates the pending request status based on the provided action and sends
+	 * a corresponding notification for accepted or rejected outcomes.
+	 *
+	 * @param custId Customer identifier associated with the pending rate request
+	 * @param action Action to perform, typically "Accept" or another string for rejection
+	 * @return Updated RateRequest entity after status change
+	 */
+	@PreAuthorize("hasRole('CUSTOMER')")
 	@GetMapping("/api/rate-accepting/{custId}/{action}")
 	public RateRequest acceptRate(@PathVariable String custId, @PathVariable String action) {
 		log.info("\n==================== Accepting/appealing rate - custId: {}, action: {} =====================\n",
@@ -222,6 +305,7 @@ public class RateRequestController {
 		log.info("=============== Rate request exists");
 		log.info("=============== About to pick action: {}", action);
 		byte status = 3;
+		// Map the action to the request acceptance status.
 		status = action.equalsIgnoreCase("Accept") ? (byte) 2 : status;
 		log.info("=============== About to pick action, status: {}", status);
 		log.info("============= Status: {}::::::\n\n", status);
@@ -235,6 +319,16 @@ public class RateRequestController {
 		return rateRequest;
 	}
 
+	/**
+	 * Retrieves a pending negotiated rate request for a specific customer.
+	 *
+	 * This endpoint is intended for customers to see their current pending rate
+	 * request that is still awaiting treasury action.
+	 *
+	 * @param custId Customer identifier to lookup pending requests
+	 * @return Negotiated rate response for the pending request
+	 */
+	@PreAuthorize("hasRole('CUSTOMER')")
 	@GetMapping("/api/pending-rate-request/{custId}")
 	public DTORateResponse findPendingRateByCustomer(@PathVariable String custId) {
 		log.info("\n==================== Getting negotiated rate for custId {} =====================\n", custId);
@@ -252,13 +346,39 @@ public class RateRequestController {
 		return response;
 	}
 
+	/**
+	 * Returns a single rate request by its identifier.
+	 *
+	 * Accessible to treasury officers and admin users for review or action.
+	 *
+	 * @param id Negotiated rate request identifier
+	 * @return RateRequest entity if found
+	 */
+	@PreAuthorize("hasAnyRole('TREASURER','ADMIN')")
 	@GetMapping("/api/rate-request/{id}")
 	public RateRequest getRateRequest(@PathVariable int id) {
 		return rateRequestService.getRateRequestRepo().findById(id);
 	}
 
+	/**
+	 * Retrieves all pending negotiated rate requests that are waiting for treasury approval.
+	 *
+	 * @return List of pending RateRequest entities with status 0
+	 */
+	@PreAuthorize("hasRole('TREASURER')")
 	@GetMapping("/api/pending-rate-request")
 	public List<RateRequest> getPendingRequests() {
 		return rateRequestService.getRateRequestRepo().findByStatus((byte) 0);
+	}
+
+	/**
+	 * A simple admin-only endpoint used to verify ADMIN access.
+	 *
+	 * @return Confirmation string when the request is authorized
+	 */
+	@GetMapping("/test-admin")
+	@PreAuthorize("hasRole('ADMIN')")
+	public String testAdmin() {
+		return "Admin access granted";
 	}
 }

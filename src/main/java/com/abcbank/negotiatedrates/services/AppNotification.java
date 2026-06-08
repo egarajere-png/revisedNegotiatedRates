@@ -10,6 +10,12 @@ import com.abcbank.negotiatedrates.utils.StringOperation;
 
 import lombok.extern.slf4j.Slf4j;
 
+/**
+ * Sends email notifications for negotiated rate request lifecycle events.
+ *
+ * This service composes message subjects and bodies based on event type and uses
+ * the Emailer utility to deliver notifications to customers and treasury.
+ */
 @Slf4j
 @Service
 public class AppNotification {
@@ -20,6 +26,15 @@ public class AppNotification {
     @Value("${app.config.param.email-from}")
     private String from;
 
+    /**
+     * Sends a rate request notification email based on the provided event type.
+     *
+     * The notification content changes depending on whether a request is created,
+     * granted, accepted, or rejected.
+     *
+     * @param request Negotiated rate request entity
+     * @param type Notification type such as "request", "granted", "accepted", or "rejected"
+     */
     public void sendRateRequestNotification(RateRequest request, String type) {
         String name = StringOperation.getFirstWord(request.getRequestedBy());
         String subject = "Negotiated Rate Request Initiated";
@@ -30,6 +45,7 @@ public class AppNotification {
         + "currency %s to %s. Kindly action on Negotiated Rates Portal.", request.getRequestedBy(), request.getCustomerName(), request.getSourceCurrency(), request.getDestinationCurrency());
         if(type.equalsIgnoreCase("granted")) {
             double rate = request.getGrantedRate();
+            // Compose the customer email for a granted negotiated rate offer.
             subject = "Negotiated Rate Request Granted";
             String template = "Hello %s, \n\nYou have been granted a negotiated rate of %,.2f for the customer name %s, currency %s to %s. \n\nTo accept the rate offered:\n"
     		+ "\n\n * Go to ABConnect - https://ibank.abcthebank.com\n"

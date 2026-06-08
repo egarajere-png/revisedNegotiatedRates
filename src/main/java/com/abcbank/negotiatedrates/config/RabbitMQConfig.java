@@ -8,6 +8,12 @@ import org.springframework.amqp.support.converter.Jackson2JsonMessageConverter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+/**
+ * Configures RabbitMQ queue and messaging infrastructure for negotiated rates events.
+ *
+ * Defines a durable queue, message converter, and RabbitTemplate used by the
+ * producer to publish events in a JSON format.
+ */
 @Configuration
 public class RabbitMQConfig {
 
@@ -16,6 +22,7 @@ public class RabbitMQConfig {
 
     @Bean
     public Queue rateRequestQueue() {
+        // Declare a durable queue for rate request events so messages survive broker restarts.
         return new Queue(RATE_REQUEST_QUEUE, true);
     }
 

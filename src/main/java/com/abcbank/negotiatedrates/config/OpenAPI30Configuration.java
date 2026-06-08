@@ -8,6 +8,12 @@ import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.security.SecurityRequirement;
 import io.swagger.v3.oas.models.security.SecurityScheme;
 
+/**
+ * Configures OpenAPI 3 documentation and JWT bearer authentication display.
+ *
+ * This configuration ensures the generated API documentation includes a
+ * bearerAuth security scheme for JWT tokens.
+ */
 @Configuration
 public class OpenAPI30Configuration {
 @Bean

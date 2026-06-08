@@ -3,6 +3,12 @@ package com.abcbank.negotiatedrates.dto;
 import lombok.Data;
 import lombok.ToString;
 
+/**
+ * Represents transfer details posted by a customer after rate approval.
+ *
+ * This DTO is used to capture beneficiary and amount data for a transfer
+ * associated with a negotiated rate request.
+ */
 @ToString
 @Data
 public class DTOTransfer {

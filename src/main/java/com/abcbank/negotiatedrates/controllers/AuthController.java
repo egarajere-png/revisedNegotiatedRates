@@ -17,6 +17,12 @@ import com.abcbank.negotiatedrates.dto.DTOAuthPayloadResponse;
 
 import lombok.extern.slf4j.Slf4j;
 
+/**
+ * Handles authentication token retrieval from Keycloak for the negotiated rates API.
+ *
+ * This controller posts user credentials to Keycloak and returns the OAuth2 token
+ * response used by clients to authenticate against protected endpoints.
+ */
 @Slf4j
 @RestController
 public class AuthController {
@@ -27,6 +33,15 @@ public class AuthController {
 	@Value("${params.keycloak.config.clientid}")
 	private String keyCloakClientId;
 	
+    /**
+     * Exchanges user credentials for a Keycloak access token.
+     *
+     * Builds a form-encoded password grant request and forwards it to the
+     * configured Keycloak token endpoint.
+     *
+     * @param authPayload User credentials for authentication
+     * @return Token response from Keycloak or an empty response on failure
+     */
 	@PostMapping("/negotiated-rates/api/auth-token")
     public DTOAuthPayloadResponse authenticateUser(@RequestBody DTOAuthPayload authPayload) {
 		HttpHeaders headers = new HttpHeaders();

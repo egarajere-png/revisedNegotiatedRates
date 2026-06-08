@@ -3,6 +3,13 @@ package com.abcbank.negotiatedrates.dto;
 import lombok.Data;
 import lombok.ToString;
 
+/**
+ * Represents a negotiated rate request submitted by a customer.
+ *
+ * This DTO carries information used by the API to create or update
+ * a negotiated rate request, including currency pair, requested amount,
+ * and customer details.
+ */
 @ToString
 @Data
 public class DTORateRequest {

@@ -12,6 +12,12 @@ import javax.persistence.ManyToOne;
 import lombok.Data;
 import lombok.ToString;
 
+/**
+ * Represents a transfer transaction associated with a negotiated rate request.
+ *
+ * The entity stores transfer amount, beneficiary details, currency pair data,
+ * and a reference to the related RateRequest.
+ */
 @ToString
 @Data
 @Entity

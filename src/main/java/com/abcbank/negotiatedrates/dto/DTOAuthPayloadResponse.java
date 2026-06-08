@@ -7,6 +7,12 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 
+/**
+ * Holds the token response returned by Keycloak when authentication succeeds.
+ *
+ * Includes access token, refresh token, token type, expiration details, and
+ * the session state returned by the identity provider.
+ */
 @Data
 @ToString
 @AllArgsConstructor
