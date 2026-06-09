@@ -372,7 +372,7 @@ public class RateRequestController {
 	}
 
 	/**
-	 * A simple admin-only endpoint used to verify ADMIN access.
+	 * A simple admin, treasurer and Customer endpoint used to verify their access.
 	 *
 	 * @return Confirmation string when the request is authorized
 	 */
@@ -381,4 +381,16 @@ public class RateRequestController {
 	public String testAdmin() {
 		return "Admin access granted";
 	}
+
+	@GetMapping("/test-treasurer")
+	@PreAuthorize("hasRole('TREASURER')")
+	public String testTreasurer() {
+  	  return "Treasurer access granted";
+}
+
+	@GetMapping("/test-customer")
+	@PreAuthorize("hasRole('CUSTOMER')")
+	public String testCustomer() {
+ 	   return "Customer access granted";
+}
 }
