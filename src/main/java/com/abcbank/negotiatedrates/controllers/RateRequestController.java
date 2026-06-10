@@ -376,21 +376,23 @@ public class RateRequestController {
 	 *
 	 * @return Confirmation string when the request is authorized
 	 */
-	@GetMapping("/test-admin")
-	@PreAuthorize("hasRole('ADMIN')")
-	public String testAdmin() {
-		return "Admin access granted";
-	}
 
-	@GetMapping("/test-treasurer")
-	@PreAuthorize("hasRole('TREASURER')")
-	public String testTreasurer() {
-  	  return "Treasurer access granted";
-}
+	// WAS USED FOR TESTING PURPOSES
+// 	@GetMapping("/test-admin")
+// 	@PreAuthorize("hasRole('ADMIN')")
+// 	public String testAdmin() {
+// 		return "Admin access granted";
+// 	}
 
-	@GetMapping("/test-customer")
-	@PreAuthorize("hasRole('CUSTOMER')")
-	public String testCustomer() {
- 	   return "Customer access granted";
-}
+// 	@GetMapping("/test-treasurer")
+// 	@PreAuthorize("hasRole('TREASURER')")
+// 	public String testTreasurer() {
+//   	  return "Treasurer access granted";
+// }
+
+// 	@GetMapping("/test-customer")
+// 	@PreAuthorize("hasRole('CUSTOMER')")
+// 	public String testCustomer() {
+//  	   return "Customer access granted";
+// }
 }

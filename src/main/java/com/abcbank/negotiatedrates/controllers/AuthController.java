@@ -33,6 +33,9 @@ public class AuthController {
 	@Value("${params.keycloak.config.clientid}")
 	private String keyCloakClientId;
 	
+	@Value("${params.keycloak.config.client-secret}")
+	private String keyCloakClientSecret;
+
     /**
      * Exchanges user credentials for a Keycloak access token.
      *
@@ -48,6 +51,7 @@ public class AuthController {
         headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
         MultiValueMap<String, String> map = new LinkedMultiValueMap<>();
         map.add("client_id", keyCloakClientId);
+        map.add("client_secret", keyCloakClientSecret);
         map.add("username", authPayload.getUsername());
         map.add("password", authPayload.getPassword());
         map.add("grant_type", "password");
@@ -60,6 +64,8 @@ public class AuthController {
             String responseError = exception.getLocalizedMessage().replace("400 Bad Request: ", "");
             log.error(responseError);
             return new DTOAuthPayloadResponse();
+            // log.error("Authentication error", exception);
+            // return new DTOAuthPayloadResponse();
         }
 	}
 }
