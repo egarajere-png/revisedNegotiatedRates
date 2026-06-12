@@ -1,5 +1,5 @@
 ARG VERSION=0.0.1-SNAPSHOT
-FROM openjdk:17
+FROM openjdk:17.0.2-jdk
 LABEL MAINTAINER "samuel.waithaka@abcthebank.com"
 
 WORKDIR /app

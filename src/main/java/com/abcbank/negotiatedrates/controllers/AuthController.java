@@ -64,8 +64,7 @@ public class AuthController {
             String responseError = exception.getLocalizedMessage().replace("400 Bad Request: ", "");
             log.error(responseError);
             return new DTOAuthPayloadResponse();
-            // log.error("Authentication error", exception);
-            // return new DTOAuthPayloadResponse();
+
         }
 	}
 }
