@@ -31,3 +31,10 @@ build/
 
 ### VS Code ###
 .vscode/
+
+
+# Local Keycloak files
+keycloak/
+keycloak-export/
+
+src/main/java/com/abcbank/negotiatedrates/config/keysforkeycloak.txt
